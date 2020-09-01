@@ -1,0 +1,41 @@
+x (A) 1&1 Vertrag kündigen +bismarck due:2020-07-13
+(A) Fahrrad Holen
+(A) In Berlin melden > GrooveControlSteuer Banken Krankenversicherung Personalausweis Rundfunkbeitrag GCImpressum
+(A) Möbel Schöneweide
+x (A) Rückmelden +uni due:2020-07-15
+(B) 30€ Dauerauftrag ab 25.6. von der Bismarckwg +bismarck
+(B) Groove Control mixes +groovecontrol
+(B) Hummus Connection mixes +hummusconnection
+(B) Rundfunkbeitrag - Meine Zahlung für Bismarckwg abmelden +bismarck
+(B) WG Konto Bismarck loswerden +bismarck
+x 1 Vanilleeis +buy
+x Aylins Rad fixen lassen
+Backup von ALTEN Daten +projects
+x Bier 4x +buy
+x Brokkoli +buy
+x Chips +buy
+x Ginger Beer +buy
+x Grasovka +buy
+x Hautarzt: Das ding am Kopf
+Hosts file +poweruser +projects
+Klavierhocker +projects +bauen @bayreuth
+x Knoblauch +buy
+x Kokosmilch 2x +buy
+x Möhren +buy
+x Müll wegbringen
+x Netflix auf anderes Konto umbiegen +bismarck
+Nord Repair +umzug
+Posaune zu Eva @bayreuth
+Rechnungen digitalisieren +projects
+x Reis +buy
+Schloss entrosten? +projects
+Schuhe kaufen!
+Schuhe zum Schuster +projects
+Tastatur fixen -> Hackerspace? leitender Silberlack? +projects
+Umsteigen auf Nachhaltige Bank +projects
+Umsteigen auf Nextcloud +projects
+x Vortrag +DNN due:2020-06-24 pri:A
+x Wattstr saubermachen
+x Weißwein, Trocken +buy
+x Zucchini +buy
+x Zwiebeln +buy

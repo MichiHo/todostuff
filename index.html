@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Todostuff</title>
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'nonce-EDNnf03nceIOfn39fn3e9h3sdfa'      " />
+  <meta http-equiv="X-Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'  'nonce-EDNnf03nceIOfn39fn3e9h3sdfa'" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="header" class="panel">
+    <span id="save-state-indicator"></span>
+    <button id="openBtn">Open</button>
+    <button id="saveBtn">Save</button>
+    <button id="saveAsBtn">Save as</button>
+    <button id="newPanelBtn">+ Panel</button></div>
+  <div id="main">
+    <div id="settings" class="panel">
+
+    </div>
+  </div>
+  <script nonce="EDNnf03nceIOfn39fn3e9h3sdfa">var exports = { "__esModule": true };</script>
+  <script src="./dist/utils.js"></script>
+  <script src="./dist/data.js"></script>
+  <script src="./dist/filters.js"></script>
+  <script src="./dist/io.js"></script>
+  <script src="./dist/conf.js"></script>
+  <script src="./dist/uielements.js"></script>
+  <script src="./dist/renderer.js"></script>
+</body>
+
+</html>
