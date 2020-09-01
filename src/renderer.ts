@@ -15,9 +15,9 @@ namespace UI {
             saveData()
         }
         /** Decide selection state */
-        let selectEvent = (multiple: boolean) => {
+        let selectEvent = (single: boolean) => {
             let wasSelected = result.hasClass("selected")
-            if (multiple) result.parent().children(".todo-entry").removeClass("selected")
+            if (single) result.parent().children(".todo-entry").removeClass("selected")
             if (result.hasClass("selected") == wasSelected) result.toggleClass("selected")
         }
         result.mousedown((e) => selectEvent(!e.shiftKey && !e.ctrlKey)).keydown(e => {
@@ -46,6 +46,16 @@ namespace UI {
     }
     function createList(): JQuery {
         let result = $("<div>").addClass("list")
+        // $("<body>").focusin(() => {
+        //     if(!$(this).closest("list").is(result)) result.children(".todo-entry").removeClass("selected")
+        // })
+        result.focusout((e) => {
+            setTimeout(function () { // needed because nothing has focus during 'focusout'
+                if (!$(':focus').parent().is(result)) {
+                    result.children(".todo-entry").removeClass("selected")
+                }
+            }, 0);
+        })
         result.keydown((e) => {
             if (e.key == "Delete") {
                 result.children("div.todo-entry.selected").each((i, htmlEl) => {
@@ -128,35 +138,48 @@ namespace UI {
 
     // }
     function newPanel(configuration: conf.PanelConf) {
-        let list = createList().addClass("panel user-panel").appendTo("#main")
-        let header = editableHeader(configuration.filter, "All Tasks", () => updateCall()).appendTo(list)
-        $("<div>").addClass("panel-header").appendTo(list)
-            .append(showHideButton(list, configuration.shown, shown => {
+        let panel = $("<div>").addClass("panel user-panel").appendTo("#main").attr("tabindex", 0)
+        panel.keydown((e) => {
+            if(e.key == "Delete" && e.target == panel.get(0)) {
+                console.log("delete")
+                conf.current.panels.splice(conf.current.panels.indexOf(configuration),1)
+                conf.saveCurrentPath()
+                panel.remove()
+            }
+        })
+        let panelTitle = editableHeader(configuration.filter, "All Tasks", () => update()).appendTo(panel)
+        let panelHeader = $("<div>").addClass("panel-header").appendTo(panel)
+            .append(showHideButton(panel, configuration.shown, shown => {
                 configuration.shown = shown;
                 conf.saveCurrentPath()
             }))
-            .append(header)
+            .append(panelTitle)
 
-        let createNewField = $("<div>").addClass("new-entry-field flex-field").appendTo(list)
-        let filters: { (element: Data.TodoEntry): boolean }[] = []
-        let parse = new Data.TodoEntry("")
+        let createNewField = $("<div>").addClass("new-entry-field flex-field").appendTo(panel)
+        let list = createList().appendTo(panel)
+        let filter: Filters.Filter
         let updateCall = () => {
             list.children(".todo-entry").remove()
-            filters = []
-            configuration.filter = header.children("input").val() as string
-            parse = Data.TodoEntry.fromString(configuration.filter)
-            if (parse != null) {
-                if (parse.priority != "") filters.push((element) => element.priority == parse.priority)
-                if (parse.title != "") filters.push((element) => element.title.startsWith(parse.title))
-                for (let item of parse.projects) filters.push((element) => element.projects.includes(item))
-                for (let item of parse.resources) filters.push((element) => element.resources.includes(item))
-
-            }
-            itemLoop:
-            for (let item of Data.entries) {
-                for (let filter of filters) {
-                    if (!filter(item)) continue itemLoop
+            configuration.filter = panelTitle.children("input").val() as string
+            filter = Filters.fromString(configuration.filter)
+            let additionalFilter: Filters.FilterFn = null
+            if (filter.remainsOnly) {
+                let excludedFilters: Filters.Filter[] = []
+                for (let otherPanel of conf.current.panels) {
+                    if (otherPanel.filter == "") continue;
+                    let otherFilter = Filters.fromString(otherPanel.filter)
+                    if (!otherFilter.remainsOnly) excludedFilters.push(otherFilter)
                 }
+                additionalFilter = (entry) => {
+                    for (let otherFilter of excludedFilters) {
+                        if (otherFilter.apply(entry)) return false
+                    }
+                    return true
+                }
+            }
+            for (let item of Data.entries) {
+                if (!filter.apply(item)) continue
+                if (additionalFilter != null && !additionalFilter(item)) continue
                 createListEntry(item).appendTo(list)
             }
             conf.saveCurrentPath()
@@ -167,7 +190,7 @@ namespace UI {
             if (e.which == 13) {
                 let newEntry = Data.TodoEntry.fromString(createNewInput.val() as string)
                 if (newEntry != null) {
-                    newEntry.append(parse)
+                    newEntry.append(filter.templateEntry)
                     Data.addEntry(newEntry)
                     saveStateIndicator("unsaved")
                     saveData()
@@ -313,8 +336,8 @@ namespace UI {
             $("#save-state-indicator").toggleClass("save-" + s, state == s)
     }
     function saveData() {
-        file.write(conf.current.mainFile,err => {
-            if(err) saveStateIndicator("error")
+        file.write(conf.current.mainFile, err => {
+            if (err) saveStateIndicator("error")
             else saveStateIndicator("saved")
         })
     }

@@ -76,6 +76,9 @@ h2 {
   padding: 5px;
   margin: 5px;
 }
+.panel:focus {
+  outline: solid 3px rgb(var(--focused));
+}
 .todo-entry {
   position: relative;
     padding-top: 6px;
@@ -84,7 +87,7 @@ h2 {
     border-left: solid 1px gray;
 }
 .todo-entry:focus {
-  outline: dashed 2px rgba(var(--focused),1);
+  outline: solid 2px rgba(var(--focused),1);
 }
 .todo-entry:hover {
   background: rgba(255,255,255,0.3)
