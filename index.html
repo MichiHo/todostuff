@@ -15,13 +15,82 @@
 <body>
   <div id="header" class="panel">
     <span id="save-state-indicator"></span>
-    <button id="openBtn">Open</button>
-    <button id="saveBtn">Save</button>
-    <button id="saveAsBtn">Save as</button>
+    <button id="settingsBtn">Settings</button>
+    <button id="helpBtn">Help</button>
     <button id="newPanelBtn">+ Panel</button></div>
   <div id="main">
     <div id="settings" class="panel">
 
+    </div>
+    <div id="help" class="panel">
+      <div class="panel-header"></div>
+      <details>
+        <summary>About</summary>
+        <p>
+          This program operates on a <a href="http://todotxt.org/">todo.txt</a> file, as introduced by
+          Gina Trapani. In this single file, each line corresponds to a task, which can contain a single-letter
+          <em class="a">priority</em>, several <em class="b">projects</em> and <em class="c">resources</em>
+          and also arbitrary <em class="d">properties</em>, and is marked as done by preceding it with an
+          <em class="e">x</em>.</p>
+
+        <code>
+        <em class="e">x</em> 
+        <em class="a">(A)</em> 
+        Save the world
+        <em class="b">+lifegoals</em> 
+        <em class="c">@superpowers</em> 
+        <em class="d">due:2020-09-02</em> 
+      </code>
+
+        <p>
+          The main file could be stored in the cloud to enable easy synchronization
+          with other computers or various mobile apps already available for <em>todo.txt</em>.
+        </p>
+      </details>
+
+      <details>
+        <summary>Panels</summary>
+        <p>
+          With this app you can view your <em>todo.txt</em>-file filtered in different ways,
+          each displayed as a panel. The filters are configured with entered text similar to the
+          entries themselves, with some additional options. Priority, projects and resources are
+          automatically set for new entries created in a panel.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>Filters</summary>
+        <ul>
+          <li>
+            <code><em class="a">(A)</em></code> only prio A items
+            <br>
+            <code><em class="a">(&lt;A)</em></code> items with prio lower than A, including items without prio
+            <br>
+            <code><em class="a">(&gt;C)</em></code> only prio A and B items
+          </li>
+          <li>
+            Only items with <code><em class="b">+thisProject</em></code>
+            and <code><em class="c">@thisResource</em></code> are shown
+          </li>
+          <li>
+            Items with <code><em class="b">!+thisProject</em></code> and
+            <code><em class="c">!@thisResource</em></code> are hidden
+          </li>
+          <li>
+            <code>%done</code> only completed tasks
+            <br>
+            <code><em class="e">!x</em></code> only uncompleted tasks
+          </li>
+          <li>
+            <code>%remains</code> shows only tasks not selected by any panel with filters and
+            without <code>%remains</code>
+          </li>
+          <li>
+            Any other entered text can be used to only show tasks containing this text
+          </li>
+        </ul>
+      </details>
     </div>
   </div>
   <script nonce="EDNnf03nceIOfn39fn3e9h3sdfa">var exports = { "__esModule": true };</script>

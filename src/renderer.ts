@@ -1,54 +1,87 @@
 import $ = require("jquery");
+import { data } from "jquery";
+import { listenerCount } from "process";
 
 namespace UI {
     function createListEntry(entry: Data.TodoEntry): JQuery {
-        let result = $("<div>").addClass("todo-entry done-" + entry.done).data("entry", entry).attr("tabindex", "0")
+        let listEntry = $("<div>").addClass("todo-entry done-" + entry.done).data("entry", entry).attr("tabindex", "0")
         /** Toggle done-status */
         let checkEvent = () => {
             Data.removeEntry(entry)
             entry.done = !entry.done
             Data.addEntry(entry)
-            result.addClass("done-" + entry.done)
-            result.removeClass("done-" + !entry.done)
+            listEntry.addClass("done-" + entry.done)
+            listEntry.removeClass("done-" + !entry.done)
             saveStateIndicator("unsaved")
             update()
             saveData()
         }
         /** Decide selection state */
         let selectEvent = (single: boolean) => {
-            let wasSelected = result.hasClass("selected")
-            if (single) result.parent().children(".todo-entry").removeClass("selected")
-            if (result.hasClass("selected") == wasSelected) result.toggleClass("selected")
+            let wasSelected = listEntry.hasClass("selected")
+            if (single) listEntry.parent().children(".todo-entry").removeClass("selected")
+            if (listEntry.hasClass("selected") == wasSelected) listEntry.toggleClass("selected")
         }
-        result.mousedown((e) => selectEvent(!e.shiftKey && !e.ctrlKey)).keydown(e => {
-            if (e.which == 13) {
-                checkEvent()
-            } else if (e.which == 32) {
-                selectEvent(!e.shiftKey && !e.ctrlKey)
-            } else return
-            e.stopPropagation()
-            e.preventDefault()
-        })
-        $("<span>").addClass("prio").text(entry.priority).appendTo(result)
-        $("<span>").addClass("title").text(entry.title).appendTo(result)
-        for (let item of entry.projects) $("<span>").addClass("project").text(item).appendTo(result)
-        for (let item of entry.resources) $("<span>").addClass("resource").text(item).appendTo(result)
+        let editEvent = () => {
+            let w = listEntry.parent().width()
+            let h = listEntry.height()
+            let input = $("<textarea>").val(entry.toString()).appendTo(listEntry).focus().width(w).height(h)
+            input.keydown((e) => {
+                //if(e.target !== input.get(0)) return true;
+                if (e.which == 13) { // Enter
+                    let newEntry = Data.TodoEntry.fromString(input.val() as string)
+                    console.log(newEntry)
+                    if(newEntry != null){
+                        Data.removeEntry(entry)
+                        Data.addEntry(newEntry)
+                        saveStateIndicator("unsaved")
+                        update()
+                        saveData()
+                    } else {
+                        input.addClass("error")
+                    }
+                    return false;
+                } else if (e.which == 27) { // Escape = Cancel
+                    listEntry.children("span").css("display","")
+                    input.remove()
+                    return false;
+                }
+                e.stopPropagation()
+            })
+            listEntry.children("span").css("display","none")
+        }
+        listEntry
+            .mousedown((e) => selectEvent(!e.shiftKey && !e.ctrlKey))
+            .dblclick(e => editEvent())
+            .keydown(e => {
+                //if(e.target !== listEntry.get(0)) return true;
+                if (e.which == 13) { // x is pressed
+                    checkEvent()
+                } else if (e.which == 32) { //
+                    selectEvent(!e.shiftKey && !e.ctrlKey)
+                } else if (e.which == 113) {
+                    editEvent()
+                } else return
+                e.stopPropagation()
+                e.preventDefault()
+            })
+        $("<span>").addClass("prio").text(entry.priority).appendTo(listEntry)
+        $("<span>").addClass("title").text(entry.title).appendTo(listEntry)
+        for (let item of entry.projects) $("<span>").addClass("project").text(item).appendTo(listEntry)
+        for (let item of entry.resources) $("<span>").addClass("resource").text(item).appendTo(listEntry)
         for (let item in entry.properties)
-            $("<span>").addClass("property").appendTo(result)
+            $("<span>").addClass("property").appendTo(listEntry)
                 .append($("<span>").text(item).addClass("name"))
                 .append($("<span>").text(entry.properties[item]).addClass("value"))
         $("<span>").text("x").addClass("check-button").click(e => {
             checkEvent()
             e.stopPropagation()
-        }).appendTo(result)
+        }).appendTo(listEntry)
 
-        return result
+        return listEntry
     }
     function createList(): JQuery {
         let result = $("<div>").addClass("list")
-        // $("<body>").focusin(() => {
-        //     if(!$(this).closest("list").is(result)) result.children(".todo-entry").removeClass("selected")
-        // })
         result.focusout((e) => {
             setTimeout(function () { // needed because nothing has focus during 'focusout'
                 if (!$(':focus').parent().is(result)) {
@@ -57,6 +90,7 @@ namespace UI {
             }, 0);
         })
         result.keydown((e) => {
+            //if(e.target !== result.get(0)) return true;
             if (e.key == "Delete") {
                 result.children("div.todo-entry.selected").each((i, htmlEl) => {
                     let entry = $(htmlEl).data("entry") as Data.TodoEntry
@@ -78,33 +112,7 @@ namespace UI {
         })
         return result
     }
-    function editableHeader(text: string, placeholder: string, onCommit: { (value: string): void }): JQuery {
-        let container = $("<div>").addClass("editable-header").attr("title", "Doubleclick to edit")
-        let header = $("<h1>").appendTo(container).text(text)
-        let input = $("<input>").appendTo(container).css("display", "none").val(text).attr("placeholder", placeholder)
-        let updateHeader = () => {
-            if ((input.val() as string).trim() == "") header.text(placeholder).addClass("placeholder")
-            else {
-                header.text(input.val() as string).removeClass("placeholder")
-            }
-        }
-        updateHeader()
-        header.dblclick(() => {
-            input.css("display", "").val(header.hasClass("placeholder") ? "" : header.text()).focus()
-            header.css("display", "none")
-        })
-        input.keydown((e) => {
-            if (e.which == 13) {
-            } else if (e.which == 27) {
-                input.val(header.hasClass("placeholder") ? "" : header.text())
-            } else return;
-            onCommit(input.val() as string)
-            updateHeader()
-            input.css("display", "none")
-            header.css("display", "")
-        })
-        return container
-    }
+
 
     function showHideButton(target: JQuery, shown: boolean = true, callback?: { (shown: boolean): void }): JQuery {
         let btn = $("<button>").addClass("show-hide-button")
@@ -119,48 +127,40 @@ namespace UI {
     }
 
     let updateCalls: { (): void }[] = []
-    // {
-    //     let list = createList().addClass("panel").attr("id", "main-list").appendTo("#main")
-    //     $("<div>").addClass("panel-header").append(showHideButton(list)).append("<h1>All Tasks</h1>").appendTo(list)
-    //     let createNewField = $("<div>").addClass("new-entry-field").appendTo(list)
-    //     let createNewInput = $("<input>")
-    //     createNewInput.keydown((e) => {
-    //         if (e.which == 13) {
-    //             let newEntry = Data.TodoEntry.fromString(createNewInput.val() as string)
-    //             if (newEntry != null) {
-    //                 Data.addEntry(newEntry)
-    //                 update()
-    //                 createNewInput.val("").focus()
-    //             }
-    //         }
-    //     })
-    //     createNewField.append("<span>new: </span>").append(createNewInput)
 
-    // }
     function newPanel(configuration: conf.PanelConf) {
         let panel = $("<div>").addClass("panel user-panel").appendTo("#main").attr("tabindex", 0)
-        panel.keydown((e) => {
-            if(e.key == "Delete" && e.target == panel.get(0)) {
-                console.log("delete")
-                conf.current.panels.splice(conf.current.panels.indexOf(configuration),1)
-                conf.saveCurrentPath()
-                panel.remove()
-            }
+        let panelTitle = new UIElements.EditableTitle(configuration.filter, "All Tasks", (value) => {
+            configuration.filter = value
+            // Update all panels to support panels based on other panels, like %remains
+            update()
         })
-        let panelTitle = editableHeader(configuration.filter, "All Tasks", () => update()).appendTo(panel)
-        let panelHeader = $("<div>").addClass("panel-header").appendTo(panel)
+        panelTitle.container.addClass("editable-header")
+        $("<div>").addClass("panel-header").appendTo(panel)
             .append(showHideButton(panel, configuration.shown, shown => {
                 configuration.shown = shown;
                 conf.saveCurrentPath()
             }))
-            .append(panelTitle)
+            .append(panelTitle.container)
+
+        panel.keydown((e) => {
+            if (e.key == "Delete" && e.target == panel.get(0)) {
+                console.log("delete")
+                conf.current.panels.splice(conf.current.panels.indexOf(configuration), 1)
+                conf.saveCurrentPath()
+                panel.remove()
+                return false;
+            } else if (e.which == 113) { //F2
+                panelTitle.startEdit()
+                return false;
+            }
+        })
 
         let createNewField = $("<div>").addClass("new-entry-field flex-field").appendTo(panel)
         let list = createList().appendTo(panel)
         let filter: Filters.Filter
         let updateCall = () => {
             list.children(".todo-entry").remove()
-            configuration.filter = panelTitle.children("input").val() as string
             filter = Filters.fromString(configuration.filter)
             let additionalFilter: Filters.FilterFn = null
             if (filter.remainsOnly) {
@@ -204,9 +204,6 @@ namespace UI {
 
     export function update() {
         $(".todo-entry").remove()
-        Data.entries.forEach((entry) => {
-            let item = createListEntry(entry).appendTo("#main-list")
-        })
         for (let call of updateCalls) call()
     }
     export function fullUpdate() {
@@ -218,23 +215,29 @@ namespace UI {
             newPanel(panel)
         }
         mainFileField.setPath(conf.current.mainFile)
-        $("#settings").toggleClass("collapsed", !conf.current.settingsShown)
+        showSettings(conf.current.settingsShown)
+        showHelp(conf.current.helpShown)
+        $("#help").children("details").each((i, el) => {
+            let name = $(el).children("summary").text()
+            if (conf.current["help" + name] !== undefined) {
+                $(el).prop("open", conf.current["help" + name])
+            }
+        })
         update()
     }
+    function showSettings(shown: boolean) {
+        $("#settings").toggleClass("collapsed", !shown)
+        $("#settingsBtn").toggleClass("toggled", shown)
+        conf.current.settingsShown = shown
+        conf.saveCurrentPath()
+    }
+    function showHelp(shown: boolean) {
+        $("#help").toggleClass("collapsed", !shown)
+        $("#helpBtn").toggleClass("toggled", shown)
+        conf.current.helpShown = shown
+        conf.saveCurrentPath()
+    }
     let latestPath = ""
-    $("#openBtn").click(() => {
-        file.open((path) => {
-            update()
-            latestPath = path
-        })
-    })
-    $("#saveAsBtn").click(() => {
-        file.save()
-    })
-    $("#saveBtn").click(() => {
-        if (latestPath != "") file.write(latestPath)
-        else file.save()
-    })
     $("#newPanelBtn").click(() => {
         let newConf = new conf.PanelConf()
         conf.current.panels.push(newConf)
@@ -242,12 +245,41 @@ namespace UI {
         conf.saveCurrentPath()
     })
 
+    { // Help
+        let container = $("#help").addClass("hide-on-collapsed")
+        $("#helpBtn").click(() => {
+            showHelp(!conf.current.helpShown)
+        })
+        container.children(".panel-header").append(showHideButton(container, conf.current.helpShown, shown => {
+            showHelp(shown)
+        })).append("<h1>Help</h1>")
+        container.children("details").each((i, el) => {
+            let element = $(el)
+            let name = element.children("summary").text()
+
+            if (conf.current["help" + name] == undefined) {
+                conf.current["help" + name] = true
+                conf.saveCurrentPath()
+            }
+            element.prop("open", conf.current["help" + name])
+            element.mouseup(e => {
+                setTimeout(function () { // needed because details tag closes later
+                    conf.current["help" + name] = element.prop("open")
+                    conf.saveCurrentPath()
+                }, 0)
+
+            })
+        })
+    }
+
     let mainFileField: UIElements.FileField
-    {
-        let container = $("#settings")
+    { // Settings
+        $("#settingsBtn").click(() => {
+            showSettings(!conf.current.settingsShown)
+        })
+        let container = $("#settings").addClass("hide-on-collapsed")
         $("<div>").addClass("panel-header").append(showHideButton(container, conf.current.settingsShown, shown => {
-            conf.current.settingsShown = shown;
-            conf.saveCurrentPath()
+            showSettings(shown)
         })).append("<h1>Settings</h1>").appendTo(container)
         container.append("<h2>Show</h2>")
         for (let thing of Object.keys(conf.current.display)) {

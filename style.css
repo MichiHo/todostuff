@@ -1,6 +1,6 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
-    --element-background: rgb(218, 218, 218);
+    --element-background: 218, 218, 218;
     --app-background: rgba(27, 34, 36, 1);
     --project: rgba(38, 99, 25);
     --resource: rgb(25, 79, 99);
@@ -29,12 +29,18 @@ body {
   cursor: pointer;
   float: left;
   -webkit-app-region: no-drag;
-  background-color: var(--element-background);
+  background-color: rgb(var(--element-background));
 }
 #header > #newPanelBtn {
   float: right;
 }
 #header button:hover{
+  background: rgba(255,255,255,0.5)
+}
+#header button.toggled {
+  background-color: rgba(var(--element-background),0.5);
+}
+#header button.toggled:hover{
   background: rgba(255,255,255,0.5)
 }
 #save-state-indicator {
@@ -61,18 +67,20 @@ h1 {
   margin: 0;
   margin-bottom: 5px;
 }
-h2 {
+h2,
+summary {
   font-size: 16px;
   color: rgb(80,80,80);
   border-top: solid 1px var(--app-background);
   margin: 10px -5px;
   padding: 0px 5px;
+  font-weight: bold;
 }
 .panel {
   flex: 1;
   height: fit-content;
   min-width: 200px;
-  background: var(--element-background);
+  background: rgb(var(--element-background));
   padding: 5px;
   margin: 5px;
 }
@@ -146,7 +154,7 @@ h2 {
   padding-top: 4px;
   font-weight: bold;
   top: 0px;
-  background: var(--element-background);
+  background: rgb(var(--element-background));
   color: rgb(0,0,0,0.2);
 }
 .todo-entry .check-button:hover {
@@ -166,7 +174,17 @@ h2 {
 .todo-entry.selected {
   background: var(--selected);
 }
-
+.todo-entry textarea {
+  font-family: unset;
+  word-break: break-word;
+  margin-left: -31px;
+  background: rgb(var(--element-background));
+  border: none;
+  font-size: 16px;
+}
+.todo-entry textarea.error {
+  background: rgba(255,100,100,0.3);
+}
 .hide-properties .property {
   display: none;
 }
@@ -183,7 +201,11 @@ h2 {
   min-height: 30px;
   user-select: none;
 }
-
+.editable-header span {
+  font-size: 20px;
+  font-weight: bold;
+  display: block;
+}
 .editable-header input {
   font-size: 20px;
   width: 100%;
@@ -286,4 +308,46 @@ h2 {
   margin-left: 0;
   margin-top: 5px;
 }
+.collapsed.hide-on-collapsed {
+  display: none;
+}
+.hide-on-collapsed .show-hide-button:before {
+  content: "x"
+}
 
+p a {
+  color: black;
+}
+code {
+  background: rgba(0,0,0,0.07);
+  padding: 8px;
+  border-radius: 7px;
+  display: block;
+}
+em.a {
+  color: rgb(140 56 0)
+}
+em.b {
+  color: var(--project)
+}
+em.c {
+  color: var(--resource)
+}
+em.d {
+  color: rgb(140,140,0)
+}
+em.e {
+  color: rgb(181 17 171)
+}
+ul {
+  padding-left: 23px;
+  list-style-type: square;
+}
+li {
+  margin-bottom: 5px;
+}
+li code {
+  display: inline;
+  padding: 1.5px 4px;
+  border-radius: 0px;
+}

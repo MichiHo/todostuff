@@ -29,7 +29,11 @@ namespace conf {
             properties: boolean,
         },
         panels: PanelConf[],
-        settingsShown: boolean
+        settingsShown: boolean,
+        helpShown: boolean,
+        helpAbout: boolean,
+        helpPanels: boolean,
+        helpFilters: boolean
     } = {
         mainFile: "",
         display: {
@@ -41,7 +45,11 @@ namespace conf {
             filter: "",
             shown: true,
         }],
-        settingsShown: true
+        settingsShown: true,
+        helpShown: false,
+        helpAbout: true,
+        helpPanels: true,
+        helpFilters: true
     }
     export function loadDefault(callback?: { (err: any): void }) {
         loadFromFile(defaultConfPath, err => {
