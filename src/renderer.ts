@@ -31,7 +31,7 @@ namespace UI {
                 if (e.which == 13) { // Enter
                     let newEntry = Data.TodoEntry.fromString(input.val() as string)
                     console.log(newEntry)
-                    if(newEntry != null){
+                    if (newEntry != null) {
                         Data.removeEntry(entry)
                         Data.addEntry(newEntry)
                         saveStateIndicator("unsaved")
@@ -42,13 +42,13 @@ namespace UI {
                     }
                     return false;
                 } else if (e.which == 27) { // Escape = Cancel
-                    listEntry.children("span").css("display","")
+                    listEntry.children("span").css("display", "")
                     input.remove()
                     return false;
                 }
                 e.stopPropagation()
             })
-            listEntry.children("span").css("display","none")
+            listEntry.children("span").css("display", "none")
         }
         listEntry
             .mousedown((e) => selectEvent(!e.shiftKey && !e.ctrlKey))
@@ -149,6 +149,7 @@ namespace UI {
                 conf.current.panels.splice(conf.current.panels.indexOf(configuration), 1)
                 conf.saveCurrentPath()
                 panel.remove()
+                update()
                 return false;
             } else if (e.which == 113) { //F2
                 panelTitle.startEdit()
@@ -241,8 +242,8 @@ namespace UI {
     $("#newPanelBtn").click(() => {
         let newConf = new conf.PanelConf()
         conf.current.panels.push(newConf)
-        newPanel(newConf)
         conf.saveCurrentPath()
+        fullUpdate()
     })
 
     { // Help

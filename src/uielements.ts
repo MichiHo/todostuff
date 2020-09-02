@@ -70,8 +70,9 @@ namespace UIElements {
 
         constructor(text: string, public placeholder: string = "", public onCommit: { (value: string): void } = () => { }) {
             this.container = $("<div>").attr("title", "Doubleclick to edit")
-            this.content = $("<span>").appendTo(this.container).text(text)
+            this.content = $("<span>").appendTo(this.container)
             this.input = $("<input>").appendTo(this.container).css("display", "none").val(text).attr("placeholder", placeholder)
+            this.updateDisplay()
             this.content.dblclick(() => this.startEdit())
             this.input.keydown((e) => {
                 if (e.which == 13) { // Enter
@@ -94,12 +95,12 @@ namespace UIElements {
         public finishEdit(commit: boolean) {
             if (commit) this.onCommit(this.input.val() as string)
             else this.input.val(this.content.hasClass("placeholder") ? "" : this.content.text())
-            this.update()
+            this.updateDisplay()
             this.input.css("display", "none")
             this.content.css("display", "")
 
         }
-        public update() {
+        public updateDisplay() {
             if ((this.input.val() as string).trim() == "") this.content.text(this.placeholder).addClass("placeholder")
             else {
                 this.content.text(this.input.val() as string).removeClass("placeholder")
