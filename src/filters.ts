@@ -87,6 +87,8 @@ namespace Filters {
             for (let item of parse.projects) filters.push((element) => element.projects.includes(item))
             for (let item of parse.resources) filters.push((element) => element.resources.includes(item))
             if (parse.done) filters.push((element) => element.done)
+        } else {
+            parse = new Data.TodoEntry("",templatePriority)
         }
         result.apply = (entry) => {
             for (let filter of filters) {
