@@ -1,6 +1,5 @@
 import $ = require("jquery");
-import { data } from "jquery";
-import { listenerCount } from "process";
+const {systemPreferences, app} = require("electron").remote
 
 namespace UI {
     function createListEntry(entry: Data.TodoEntry): JQuery {
@@ -362,7 +361,20 @@ namespace UI {
             .append("<label>Todo file:</label>")
             .append(mainFileField.element.addClass("grow"))
     }
-    conf.loadDefault(() => fullUpdate())
+	conf.loadDefault(() => fullUpdate())
+	
+	if(systemPreferences.getAccentColor() !== null && systemPreferences.getAccentColor() != "") {
+		document.body.style.setProperty("--app-background",'#' + systemPreferences.getAccentColor())
+		app.on("browser-window-blur",(e) => {
+			let inactiveColorHex = systemPreferences.getColor("inactive-border")
+			document.body.style.setProperty("--app-background",'#' + inactiveColorHex)
+			
+		})
+		app.on("browser-window-focus",(e) => {
+			let accentColorHex = systemPreferences.getAccentColor()
+			document.body.style.setProperty("--app-background",'#' + accentColorHex)
+		})
+	}
 
     function saveStateIndicator(state: string) {
         for (let s of ["saved", "unsaved", "error"])
