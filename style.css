@@ -18,7 +18,7 @@ body {
   margin-right: 0px;
     height: 25px;
     text-align: center;
-    background: var(--app-background);
+    background: none;
 }
 #header > *{
   font-size: 20px;
@@ -102,6 +102,7 @@ summary {
 }
 .todo-entry > span {
   margin-right: 5px;
+  word-break: break-word;
 }
 .todo-entry:hover  * {
   opacity: 1 !important;
@@ -200,9 +201,9 @@ summary {
 .editable-header {
   min-height: 30px;
   user-select: none;
+  font-size: 20px;
 }
 .editable-header span {
-  font-size: 20px;
   font-weight: bold;
   display: block;
 }
@@ -264,11 +265,20 @@ summary {
   display: none;
 }
 .show-hide-button {
-  height: 28px;
-  width: 27px;
+  height: 20px;
+  width: 20px;
+  margin: 2px;
+  border-radius: 0;
+  border: none;
+  color: rgb(var(--element-background));
+  background: gray;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
   text-align: center;
+  cursor: pointer;
+}
+.show-hide-button:hover {
+  color: white;
 }
 .show-hide-button:before {
   content: "-"
@@ -290,8 +300,8 @@ summary {
   margin-right: 5px;
 }
 .collapsed {
-  max-width: 27px;
-  min-width: 27px;
+  max-width: 25px;
+  min-width: 25px;
   overflow: hidden;
 }
 .collapsed > * {
@@ -305,8 +315,9 @@ summary {
   display: block;
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  margin-left: 0;
+  margin-left: 1px;
   margin-top: 5px;
+  font-size: 18px;
 }
 .collapsed.hide-on-collapsed {
   display: none;

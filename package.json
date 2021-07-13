@@ -1,23 +1,21 @@
 {
-  "name": "electron-quick-start-typescript",
+  "name": "todostuff",
   "version": "1.0.0",
-  "description": "A minimal Electron application written with Typescript",
+  "description": "An Electron frontend for todo.txt files with panels and filters.",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "npm run build && electron ./dist/main.js"
   },
-  "repository": "https://github.com/electron/electron-quick-start-typescript",
+  "repository": "",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo",
+	"todo.txt",
+	"todo",
     "typescript"
   ],
-  "author": "GitHub",
+  "author": "Michael Hochmuth",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^10.1.0",
@@ -28,6 +26,6 @@
     "@types/jquery": "^3.5.0",
     "electron-context-menu": "^2.0.1",
     "jquery": "^3.5.1",
-    "nouislider": "^14.6.0"
+	"nouislider": "^14.6.0"
   }
 }

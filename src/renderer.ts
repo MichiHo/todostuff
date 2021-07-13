@@ -363,7 +363,9 @@ namespace UI {
     }
 	conf.loadDefault(() => fullUpdate())
 	
-	if(systemPreferences.getAccentColor() !== null && systemPreferences.getAccentColor() != "") {
+    if(systemPreferences.getAccentColor != null && 
+        systemPreferences.getAccentColor() !== null && 
+        systemPreferences.getAccentColor() != "") {
 		document.body.style.setProperty("--app-background",'#' + systemPreferences.getAccentColor())
 		app.on("browser-window-blur",(e) => {
 			let inactiveColorHex = systemPreferences.getColor("inactive-border")
